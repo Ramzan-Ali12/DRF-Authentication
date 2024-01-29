@@ -22,16 +22,18 @@ def signup(request):
 
             # Save the user with the hashed password
             user = serializer.save(password=hashed_password)
-
-            response_data = {
-                "success": "Signup successfully",
-                "user": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
+            return Response(
+                {
+                    "Success": "Signup Successfully",
+                    "User": {
+                        "id": user.id,
+                        "username": user.username,
+                        "email": user.email,
+                    },
                 },
-            }
-            return Response(response_data, status=status.HTTP_201_CREATED)
+                status=status.HTTP_201_CREATED,
+            )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -62,21 +64,20 @@ def login(request):
         if user:
             # Obtain a refresh token
             refresh = RefreshToken.for_user(user)
-
-            # Create a dictionary with the tokens and user details
-            response_data = {
-                "success": "Login successful",
-                "access_token": str(refresh.access_token),
-                "refresh_token": str(refresh),
-                "user": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
-                },
-            }
-
             # Return the response
-            return Response(response_data, status=status.HTTP_200_OK)
+            return Response(
+                {
+                    "Success": "Login Successful!",
+                    "User": {
+                        "access_token": str(refresh.access_token),
+                        "refresh_token": str(refresh),
+                        "id": user.id,
+                        "username": user.username,
+                        "email": user.email,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
 
         return Response(
             {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
