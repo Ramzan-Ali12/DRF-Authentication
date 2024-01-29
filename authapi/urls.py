@@ -21,5 +21,5 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     # api route for authentication
     path('api/auth/', include('authentication.urls')),
-    path('api/book/',include('book.urls'))
+    path('api/product/',include('products.urls'))
 ]
