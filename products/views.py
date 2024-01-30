@@ -4,14 +4,15 @@ from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from .models import Product
 from .serializers import ProductSerializer
+from drf_spectacular.utils import extend_schema
 
 
 # add products
+@extend_schema(request=ProductSerializer)
 @api_view(["POST"])
 def add(request):
     if request.method == "POST":
         serializer = ProductSerializer(data=request.data)
-        print("serializer", serializer)
         if serializer.is_valid():
             serializer.save()
             return Response(
@@ -28,6 +29,7 @@ def add(request):
         )
 
 
+@extend_schema(request=ProductSerializer)
 @api_view(["PUT"])
 def edit(request, pk):
     try:
@@ -44,19 +46,22 @@ def edit(request, pk):
             {
                 "Success": "product updated Successfully",
                 "updatedProduct": serializer.data,
-            }
+            },
+            status=status.HTTP_200_OK,
         )
     return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 
 # getAll products
+@extend_schema(request=ProductSerializer)
 @api_view(["GET"])
 def getAll(request):
     if request.method == "GET":
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response(
-            {"success": "Products found successfully", "products": serializer.data}
+            {"success": "Products found successfully", "products": serializer.data},
+            status=status.HTTP_200_OK,
         )
 
     return Response(
@@ -65,6 +70,7 @@ def getAll(request):
 
 
 # delete products
+@extend_schema(request=ProductSerializer)
 @api_view(["DELETE"])
 def delete(request, pk):
     try:
@@ -79,7 +85,7 @@ def delete(request, pk):
         product.delete()
         return Response(
             {"success": "Product deleted successfully!!"},
-            status=status.HTTP_204_NO_CONTENT,
+            status=status.HTTP_200_OK,
         )
 
     return Response({"error": "invalid request!"}, status=status.HTTP_400_BAD_REQUEST)

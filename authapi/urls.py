@@ -15,11 +15,29 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
-
+from django.urls import re_path as url
+from django.urls import path, include, re_path
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework_swagger.views import get_swagger_view
+from rest_framework import permissions
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 urlpatterns = [
-    # path('admin/', admin.site.urls),
-    # api route for authentication
-    path('api/auth/', include('authentication.urls')),
-    path('api/product/',include('products.urls'))
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path(
+        "api/schema/redoc/",
+        SpectacularRedocView.as_view(url_name="schema"),
+        name="redoc",
+    ),
+    path("api/auth/", include("authentication.urls")),
+    path("api/product/", include("products.urls")),
 ]
